@@ -1,0 +1,20 @@
+services:
+  
+  byts-ros2-workspace-base:
+    image: ghcr.io/byts/ros2-workspace:latest
+    container_name: byts-ros2-workspace
+    environment:
+      DISPLAY: ${DISPLAY:-:0}
+    cap_add:
+      - SYS_NICE
+    ulimits:
+      rtprio: 99
+      rttime: -1 # corresponds to 'unlimited'
+      memlock: 8428281856    
+    stdin_open: true
+    tty: true    
+    volumes:
+      - ../src:/ros2_ws/src            
+      - /etc/security/limits.conf:/etc/security/limits.conf
+      - /tmp/.X11-unix:/tmp/.X11-unix      
+      - byts-root-cache:/root/.cache      

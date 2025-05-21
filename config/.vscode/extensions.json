@@ -1,0 +1,14 @@
+[
+    "ms-vscode.cpptools",
+    "ms-vscode.cpptools-themes",
+    "ms-python.python",
+    "twxs.cmake",
+    "ms-iot.vscode-ros",
+    "smilerobotics.urdf",
+    "ms-vscode.cpptools-extension-pack",
+    "ms-python.black-formatter",
+    "oderwat.indent-rainbow",
+    "esbenp.prettier-vscode",
+    "DotJoshJohnson.xml",
+    "redhat.vscode-yaml"
+]

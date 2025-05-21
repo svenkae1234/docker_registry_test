@@ -1,0 +1,45 @@
+services:
+
+  byts-rosbridge-node:
+    image: ghcr.io/byts/ros2-workspace:latest
+    container_name: byts-rosbridge-node
+    ports:
+      - 9090:9090
+    networks:
+      byts-ros2-workspace-network:
+    command:
+      - ros2
+      - launch
+      - rosbridge_server
+      - rosbridge_websocket_launch.xml
+      - port:=9090
+
+  byts-ros2-workspace-windows:    
+    extends:
+      file: docker-compose.override.yml      
+      service: byts-ros2-workspace-base    
+    container_name: byts-ros2-workspace-windows
+    networks:
+      byts-ros2-workspace-network:
+
+  byts-ros2-workspace-linux:
+    extends:
+      file: docker-compose.override.yml      
+      service: byts-ros2-workspace-base
+    container_name: byts-ros2-workspace-linux      
+    devices:
+      - /dev/input:/dev/input
+      - /dev/dri:/dev/dri
+    network_mode: host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  byts-root-cache:
+
+networks:
+  byts-ros2-workspace-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.42.30.0/24"

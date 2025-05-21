@@ -1,0 +1,25 @@
+FROM docker.io/osrf/ros:jazzy-desktop-full
+
+# Arguments for proxies (default to empty if not provided)
+ARG APT_PROXY="http://host.docker.internal:43142"
+ARG PIP_PROXY="http://host.docker.internal:43141/root/pypi/+simple/"
+ARG PIP_TRUSTED_HOST="host.docker.internal"
+
+# Set the apt proxy if provided
+RUN if [ -n "$APT_PROXY" ]; then \
+    echo "Acquire::http::Proxy \"$APT_PROXY\";" > /etc/apt/apt.conf.d/01proxy; \
+    else \
+    echo "No APT proxy configured."; \
+    fi
+
+# Set the pip proxy if provided
+RUN if [ -n "$PIP_PROXY" ]; then \
+    mkdir -p /root/.pip && \
+    echo "[global]" > /root/.pip/pip.conf && \
+    if [ -n "$PIP_TRUSTED_HOST" ]; then \
+    echo "trusted-host = $PIP_TRUSTED_HOST" >> /root/.pip/pip.conf; \
+    fi && \
+    echo "index-url = $PIP_PROXY" >> /root/.pip/pip.conf; \
+    else \
+    echo "No PIP proxy configured."; \
+    fi

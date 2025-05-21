@@ -1,0 +1,25 @@
+repositories:
+  elite-robots:
+    type: git
+    url: https://github.com/neobotix/elite-robots2.git
+    version: main
+
+  zimmer-gripper:
+    type: git
+    url: https://github.com/Software-byTS/zimmer-gripper.git
+    version: main
+
+  ec66-custom:
+    type: git
+    url: https://github.com/Software-byTS/ec66-custom.git
+    version: main
+
+  camera-stuff/camera-adapter:
+    type: git
+    url: https://github.com/Software-byTS/camera-adapter.git
+    version: main
+
+  camera-stuff/realsense-ros:
+    type: git
+    url: https://github.com/IntelRealSense/realsense-ros.git
+    version: ros2-master

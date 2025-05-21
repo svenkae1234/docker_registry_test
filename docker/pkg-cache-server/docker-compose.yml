@@ -1,0 +1,19 @@
+volumes:  
+  apt-cache-data:
+  pip-cache-data:
+
+services:
+
+  package-cache-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: package-cache-server:latest
+    container_name: package-cache-server
+    restart: always
+    ports:
+      - 43141:3141
+      - 43142:3142
+    volumes:
+      - apt-cache-data:/var/cache/apt-cacher-ng
+      - pip-cache-data:/root/.devpi/server

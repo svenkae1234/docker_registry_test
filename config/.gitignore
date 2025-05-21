@@ -1,0 +1,9 @@
+cache/
+.bash_history
+.cache/
+.colcon/
+.rviz2/
+.config/
+.gz/
+.sdformat/
+.local/
