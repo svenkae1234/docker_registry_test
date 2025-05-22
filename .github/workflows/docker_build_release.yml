@@ -1,26 +1,50 @@
-name: Build Docker Image
+name: Build and Publish Docker Image
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:  # Allows manual run from GitHub UI
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository }}  # ghcr.io/OWNER/REPO
 
 jobs:
-  build-dev-image:
+  build-and-publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write  # Required to push to GHCR
+      id-token: write  # For provenance/attestation if desired
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx (for advanced builds, optional)
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Make scripts executable
         run: chmod +x ./scripts/*.sh
 
-      - name: Run clone_repos.sh
+      - name: Clone repositories
         run: ./scripts/clone_repos.sh
 
-      - name: Build Docker image using build_image.sh
+      - name: Build Docker image using your script
         run: ./scripts/build_image.sh
+
+      - name: Tag the Docker image
+        run: |
+          IMAGE_ID=${{ env.IMAGE_NAME }}
+          echo "Image ID: $IMAGE_ID"
+          docker tag dynaarm-jazzy-dev-linux $IMAGE_ID:latest
+
+      - name: Push the Docker image to GHCR
+        run: |
+          docker push ${{ env.IMAGE_NAME }}:latest
