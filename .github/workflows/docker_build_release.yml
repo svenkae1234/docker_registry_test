@@ -59,7 +59,7 @@ jobs:
       - name: Compare digests
         id: compare
         run: |
-          if [ "${{ steps.load_previous.outputs.previous_digest }}" = "none" ]; then
+          if [ "${{ steps.load_previous.outputs.previous_digest }}" = "" ]; then
             echo "No previous digest – assuming change."
             echo "changed=true" >> $GITHUB_OUTPUT
           elif [ "${{ steps.load_previous.outputs.previous_digest }}" != "${{ steps.check_digest.outputs.digest }}" ]; then
