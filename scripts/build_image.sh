@@ -2,6 +2,10 @@
 
 # ===== Global Variables =====
 
+# Allow overriding image name from environment
+IMAGE_NAME="${IMAGE_NAME:-ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest}"
+
+
 # Container runtime (Docker/Podman)
 CONTAINER_COMMAND=""
 
