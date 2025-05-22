@@ -49,21 +49,27 @@ jobs:
         run: |
           if [ -f ${{ env.DIGEST_FILE }} ]; then
             previous=$(cat ${{ env.DIGEST_FILE }})
-            echo "previous_digest=$previous" >> $GITHUB_OUTPUT
           else
-            echo "previous_digest=none" >> $GITHUB_OUTPUT
+            echo "No previous digest found, treating as new image."
+            previous="none"
           fi
+          echo "previous_digest=$previous" >> $GITHUB_OUTPUT
+
 
       - name: Compare digests
         id: compare
         run: |
-          echo "Previous digest: ${{ steps.load_previous.outputs.previous_digest }}"
-          echo "Current digest: ${{ steps.check_digest.outputs.digest }}"
-          if [ "${{ steps.load_previous.outputs.previous_digest }}" != "${{ steps.check_digest.outputs.digest }}" ]; then
+          if [ "${{ steps.load_previous.outputs.previous_digest }}" = "none" ]; then
+            echo "No previous digest – assuming change."
+            echo "changed=true" >> $GITHUB_OUTPUT
+          elif [ "${{ steps.load_previous.outputs.previous_digest }}" != "${{ steps.check_digest.outputs.digest }}" ]; then
+            echo "Digest changed."
             echo "changed=true" >> $GITHUB_OUTPUT
           else
+            echo "Digest unchanged."
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
+
 
       - name: Log in to the Container registry
         if: steps.compare.outputs.changed == 'true'
