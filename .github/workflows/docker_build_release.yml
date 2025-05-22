@@ -68,6 +68,7 @@ jobs:
           else
             echo "Digest unchanged."
             echo "${{steps.load_previous.outputs.previous_digest}}"
+            echo "Digest unchanged."
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
