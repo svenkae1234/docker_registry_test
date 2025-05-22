@@ -6,7 +6,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  #IMAGE_NAME: ${{ github.repository }}  # e.g. ghcr.io/username/repo
   IMAGE_NAME: "duatic/dev-workspace/dynaarm-jazzy:latest"
 
 jobs:
