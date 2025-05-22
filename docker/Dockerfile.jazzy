@@ -1,3 +1,4 @@
+# Dockerfile.jazzy
 ARG BASE_IMAGE=docker.io/osrf/ros:jazzy-desktop-full
 FROM ${BASE_IMAGE}
 
@@ -38,9 +39,9 @@ RUN apt-get update && \
     ros-$ROS_DISTRO-plotjuggler \
     ros-$ROS_DISTRO-plotjuggler-ros \
     ros-$ROS_DISTRO-ros2controlcli \
-    ros-$ROS_DISTRO-joy \            
+    ros-$ROS_DISTRO-joy \    
     ros-$ROS_DISTRO-rosbridge-suite && \
-    pip3 install elirobots transforms3d pytest rosdepc pre-commit
+    pip install pre-commit --break-system-packages
 
 RUN git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it && \
     bash ~/.bash_it/install.sh

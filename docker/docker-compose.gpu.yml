@@ -1,5 +1,5 @@
 services:
-  byts-ros2-workspace-windows:
+  dynaarm-jazzy-dev-windows:
     deploy:
       resources:
         reservations:
@@ -8,7 +8,7 @@ services:
               count: 1
               capabilities: [gpu]
 
-  byts-ros2-workspace-linux:
+  dynaarm-jazzy-dev-linux:
     deploy:
       resources:
         reservations:

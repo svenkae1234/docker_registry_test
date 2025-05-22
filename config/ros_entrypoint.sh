@@ -40,4 +40,13 @@ cc() {
     rm -r build install log
 }
 
+# Function to build the workspace and then reload the history
+rrl() {
+    ros2 launch dynaarm_examples real.launch.py
+}
+
+frl() {
+    ros2 launch dynaarm_examples mock.launch.py
+}
+
 exec "$@"

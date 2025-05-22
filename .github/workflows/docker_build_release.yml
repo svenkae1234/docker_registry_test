@@ -1,92 +1,48 @@
 name: Create and publish a Docker image
 
+# Configures this workflow to run every time a change is pushed to the branch called release.
 on:
   push:
-    branches:
-      - main
-  # schedule:
-  #   - cron: '45 13 * * *'  # Every day at 13:45 UTC
+    branches: ['main']
 
+# Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  BASE_IMAGE: ghcr.io/byts/ros2-workspace:latest
-  DIGEST_FILE: ros2_base_image_digest.txt
 
+# There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    # Sets the permissions granted to the GITHUB_TOKEN for the actions in this job.
     permissions:
       contents: read
       packages: write
       attestations: write
       id-token: write
-
+      #
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Install skopeo and jq
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y skopeo jq
-
-      - name: Authenticate to GitHub Container Registry for skopeo
-        env:
-          CR_PAT: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo $CR_PAT | skopeo login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Get current digest of base image
-        id: check_digest
-        run: |
-          digest=$(skopeo inspect docker://${{ env.BASE_IMAGE }} | jq -r '.Digest')
-          echo "digest=$digest" >> $GITHUB_OUTPUT
-          echo "$digest" > current_digest.txt
-
-      - name: Load previous digest
-        id: load_previous
-        run: |
-          if [ -f ${{ env.DIGEST_FILE }} ]; then
-            previous=$(cat ${{ env.DIGEST_FILE }})
-          else
-            previous="none"
-          fi
-          echo "previous_digest=$previous" >> $GITHUB_OUTPUT
-
-      - name: Compare digests
-        id: compare
-        run: |
-          if [ "${{ steps.load_previous.outputs.previous_digest }}" = "none" ]; then
-            echo "No previous digest — assume changed"
-            echo "changed=true" >> $GITHUB_OUTPUT
-          elif [ "${{ steps.load_previous.outputs.previous_digest }}" != "${{ steps.check_digest.outputs.digest }}" ]; then
-            echo "Digest changed"
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "Digest unchanged"
-            echo "changed=false" >> $GITHUB_OUTPUT
-          fi
-
+      # Uses the docker/login-action action to log in to the Container registry registry using the account and password that will publish the packages. Once published, the packages are scoped to the account defined here.
       - name: Log in to the Container registry
-        if: steps.compare.outputs.changed == 'true'
-        uses: docker/login-action@v3
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+      # This step uses [docker/metadata-action](https://github.com/docker/metadata-action#about) to extract tags and labels that will be applied to the specified image. The id "meta" allows the output of this step to be referenced in a subsequent step. The images value provides the base name for the tags and labels.
       - name: Extract metadata (tags, labels) for Docker
-        if: steps.compare.outputs.changed == 'true'
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
+      # This step uses the docker/build-push-action action to build the image, based on your repository's Dockerfile. If the build succeeds, it pushes the image to GitHub Packages.
+      # It uses the context parameter to define the build's context as the set of files located in the specified path. For more information, see [Usage](https://github.com/docker/build-push-action#usage) in the README of the docker/build-push-action repository.
+      # It uses the tags and labels parameters to tag and label the image with the output from the "meta" step.
       - name: Build and push Docker image
-        if: steps.compare.outputs.changed == 'true'
         id: push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./docker/pkg-cache-server
           file: ./docker/pkg-cache-server/Dockerfile
@@ -94,23 +50,11 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+      
+      # This step generates an artifact attestation for the image, which is an unforgeable statement about where and how it was built. It increases supply chain security for people who consume the image. For more information, see [Using artifact attestations to establish provenance for builds](/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds).
       - name: Generate artifact attestation
-        if: steps.compare.outputs.changed == 'true'
         uses: actions/attest-build-provenance@v2
         with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
-
-      - name: Save updated digest to file and commit
-        if: steps.compare.outputs.changed == 'true'
-        env:
-          PAT: ${{ secrets.GH_PAT }}  # This must be set as a repo secret
-        run: |
-          cp current_digest.txt ${{ env.DIGEST_FILE }}
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add ${{ env.DIGEST_FILE }}
-          git commit -m "Update base image digest to ${{ steps.check_digest.outputs.digest }}" || echo "No changes to commit"
-          git remote set-url origin https://x-access-token:${PAT}@github.com/${{ github.repository }}
-          git push origin HEAD

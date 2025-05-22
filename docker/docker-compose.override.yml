@@ -1,8 +1,8 @@
 services:
   
-  byts-ros2-workspace-base:
-    image: ghcr.io/byts/ros2-workspace:latest
-    container_name: byts-ros2-workspace
+  dynaarm-jazzy-dev-base:
+    image: ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest
+    container_name: dynaarm-jazzy-dev
     environment:
       DISPLAY: ${DISPLAY:-:0}
     cap_add:
@@ -17,4 +17,5 @@ services:
       - ../src:/ros2_ws/src            
       - /etc/security/limits.conf:/etc/security/limits.conf
       - /tmp/.X11-unix:/tmp/.X11-unix      
-      - byts-root-cache:/root/.cache      
+      - duatic-root-cache:/root/.cache      
+      

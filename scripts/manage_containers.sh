@@ -10,8 +10,8 @@ GPU_COMPOSE_FILE="../docker/docker-compose.gpu.yml"
 USE_GPU=false
 
 # Services to manage based on OS
-WINDOWS_SERVICES=("byts-ros2-workspace-windows" "byts-rosbridge-node")
-LINUX_SERVICES=("byts-ros2-workspace-linux")
+WINDOWS_SERVICES=("dynaarm-jazzy-dev-windows" "rosbridge-node")
+LINUX_SERVICES=("dynaarm-jazzy-dev-linux")
 
 # ===== Functions =====
 

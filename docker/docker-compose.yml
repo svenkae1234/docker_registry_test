@@ -1,12 +1,12 @@
 services:
 
-  byts-rosbridge-node:
-    image: ghcr.io/byts/ros2-workspace:latest
-    container_name: byts-rosbridge-node
+  rosbridge-node:
+    image: ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest
+    container_name: rosbridge-node
     ports:
       - 9090:9090
     networks:
-      byts-ros2-workspace-network:
+      dev-workspace-network:
     command:
       - ros2
       - launch
@@ -14,20 +14,19 @@ services:
       - rosbridge_websocket_launch.xml
       - port:=9090
 
-
-  byts-ros2-workspace-windows:    
+  dynaarm-jazzy-dev-windows:    
     extends:
       file: docker-compose.override.yml      
-      service: byts-ros2-workspace-base    
-    container_name: byts-ros2-workspace-windows
+      service: dynaarm-jazzy-dev-base     
+    container_name: dynaarm-jazzy-dev-windows
     networks:
-      byts-ros2-workspace-network:
+      dev-workspace-network:
 
-  byts-ros2-workspace-linux:
+  dynaarm-jazzy-dev-linux:
     extends:
       file: docker-compose.override.yml      
-      service: byts-ros2-workspace-base
-    container_name: byts-ros2-workspace-linux      
+      service: dynaarm-jazzy-dev-base
+    container_name: dynaarm-jazzy-dev-linux        
     devices:
       - /dev/input:/dev/input
       - /dev/dri:/dev/dri
@@ -36,11 +35,11 @@ services:
       - "host.docker.internal:host-gateway"
 
 volumes:
-  byts-root-cache:
+  duatic-root-cache:
 
 networks:
-  byts-ros2-workspace-network:
+  dev-workspace-network:
     driver: bridge
     ipam:
       config:
-        - subnet: "172.42.30.0/24"
+        - subnet: "172.42.20.0/24"

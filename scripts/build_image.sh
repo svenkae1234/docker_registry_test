@@ -8,10 +8,10 @@ CONTAINER_COMMAND=""
 # Paths
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
-CACHE_IMAGE_NAME="ghcr.io/byts/ros2-cache:latest"
+CACHE_IMAGE_NAME="ghcr.io/duatic/dev-workspace/dynaarm-cache:latest"
 DOCKER_CACHE_FILE="${SCRIPT_DIR}/../docker/Dockerfile.cache"
 
-IMAGE_NAME="ghcr.io/byts/ros2-workspace:latest"
+IMAGE_NAME="ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest"
 DOCKER_JAZZY_FILE="${SCRIPT_DIR}/../docker/Dockerfile.jazzy"
 
 # Flags

@@ -122,4 +122,8 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Repositories successfully cloned or updated."
-
+# Ignore the simulation and testing packages
+cd ${MAIN_DIR}/src/cartesian_controllers/cartesian_controller_simulation
+touch COLCON_IGNORE
+cd ${MAIN_DIR}/src/cartesian_controllers/cartesian_controller_tests
+touch COLCON_IGNORE

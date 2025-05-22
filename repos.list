@@ -1,25 +1,42 @@
 repositories:
-  elite-robots:
+  rsl_drive_sdk:
     type: git
-    url: https://github.com/neobotix/elite-robots2.git
+    url: https://github.com/Duatic/rsl_drive_sdk
     version: main
-
-  zimmer-gripper:
+  ethercat_sdk_master:
     type: git
-    url: https://github.com/Software-byTS/zimmer-gripper.git
+    url: https://github.com/Duatic/ethercat_sdk_master
+    version: master
+  message_logger:
+    type: git
+    url: https://github.com/leggedrobotics/message_logger.git
+    version: foxy
+  soem_interface:
+    type: git
+    url: https://github.com/Duatic/soem_interface.git
+    version: master
+  dynaarm_description:
+    type: git
+    url: https://github.com/Duatic/dynaarm_description.git
     version: main
-
-  ec66-custom:
+  alpha_description:
     type: git
-    url: https://github.com/Software-byTS/ec66-custom.git
+    url: https://github.com/Duatic/alpha_description.git
     version: main
-
-  camera-stuff/camera-adapter:
+  dynaarm_driver:
     type: git
-    url: https://github.com/Software-byTS/camera-adapter.git
+    url: https://github.com/Duatic/dynaarm_driver.git
     version: main
-
-  camera-stuff/realsense-ros:
+  dynaarm_demo:
     type: git
-    url: https://github.com/IntelRealSense/realsense-ros.git
-    version: ros2-master
+    url: https://github.com/Duatic/dynaarm_demo.git
+    version: main
+  dynaarm_gamepad_interface:
+    type: git
+    url: https://github.com/Duatic/dynaarm_gamepad_interface.git
+    version: main
+  cartesian_controllers:
+    type: git
+    url: https://github.com/fzi-forschungszentrum-informatik/cartesian_controllers.git
+    version: ros2
+  
