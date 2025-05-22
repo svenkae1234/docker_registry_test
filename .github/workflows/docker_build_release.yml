@@ -36,13 +36,7 @@ jobs:
         run: |
           digest=$(skopeo inspect docker://${{ env.BASE_IMAGE }} | jq -r '.Digest')
           echo "digest=$digest" >> $GITHUB_OUTPUT
-          echo "$digest" > ${{ env.DIGEST_FILE }}
-
-      - name: Download previous digest (if exists)
-        uses: actions/download-artifact@v4
-        with:
-          name: ros2-base-image-digest
-        continue-on-error: true
+          echo "$digest" > current_digest.txt
 
       - name: Load previous digest
         id: load_previous
@@ -50,27 +44,23 @@ jobs:
           if [ -f ${{ env.DIGEST_FILE }} ]; then
             previous=$(cat ${{ env.DIGEST_FILE }})
           else
-            echo "No previous digest found, treating as new image."
             previous="none"
           fi
           echo "previous_digest=$previous" >> $GITHUB_OUTPUT
 
-
       - name: Compare digests
         id: compare
         run: |
-          if [ "${{ steps.load_previous.outputs.previous_digest }}" = "" ]; then
-            echo "No previous digest – assuming change."
+          if [ "${{ steps.load_previous.outputs.previous_digest }}" = "none" ]; then
+            echo "No previous digest — assume changed"
             echo "changed=true" >> $GITHUB_OUTPUT
           elif [ "${{ steps.load_previous.outputs.previous_digest }}" != "${{ steps.check_digest.outputs.digest }}" ]; then
-            echo "Digest changed."
+            echo "Digest changed"
             echo "changed=true" >> $GITHUB_OUTPUT
           else
-            echo "Digest unchanged."
-            echo "Digest: ${{steps.load_previous.outputs.previous_digest}}"
+            echo "Digest unchanged"
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
-
 
       - name: Log in to the Container registry
         if: steps.compare.outputs.changed == 'true'
@@ -106,9 +96,15 @@ jobs:
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
 
-      - name: Upload new digest as artifact
+      - name: Save updated digest to file and commit
         if: steps.compare.outputs.changed == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ros2-base-image-digest
-          path: ${{ env.DIGEST_FILE }}
+        env:
+          PAT: ${{ secrets.GH_PAT }}
+        run: |
+          cp current_digest.txt ${{ env.DIGEST_FILE }}
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add ${{ env.DIGEST_FILE }}
+          git commit -m "Update base image digest to ${{ steps.check_digest.outputs.digest }}" || echo "No changes to commit"
+          git remote set-url origin https://x-access-token:${PAT}@github.com/${{ github.repository }}
+          git push origin HEAD
