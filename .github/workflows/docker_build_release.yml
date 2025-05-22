@@ -6,15 +6,15 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository }}  # ghcr.io/OWNER/REPO
+  IMAGE_NAME: ghcr.io/${{ github.repository }}:latest
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write  # Required to push to GHCR
-      id-token: write  # For provenance/attestation if desired
+      packages: write  # Needed to push to GHCR
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -30,21 +30,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Make scripts executable
+      - name: Make all scripts executable
         run: chmod +x ./scripts/*.sh
 
-      - name: Clone repositories
+      - name: Clone dependent repositories
         run: ./scripts/clone_repos.sh
 
-      - name: Build Docker image using your script
-        run: ./scripts/build_image.sh
+      - name: Build Docker image using build_image.sh
+        run: IMAGE_NAME=${{ env.IMAGE_NAME }} ./scripts/build_image.sh
 
-      - name: Tag the Docker image
-        run: |
-          IMAGE_ID=${{ env.IMAGE_NAME }}
-          echo "Image ID: $IMAGE_ID"
-          docker tag dynaarm-jazzy-dev-linux $IMAGE_ID:latest
-
-      - name: Push the Docker image to GHCR
-        run: |
-          docker push ${{ env.IMAGE_NAME }}:latest
+      - name: Push Docker image to GHCR
+        run: docker push ${{ env.IMAGE_NAME }}
