@@ -19,10 +19,6 @@ repositories:
     type: git
     url: https://github.com/Duatic/dynaarm_description.git
     version: main
-  alpha_description:
-    type: git
-    url: https://github.com/Duatic/alpha_description.git
-    version: main
   dynaarm_driver:
     type: git
     url: https://github.com/Duatic/dynaarm_driver.git
