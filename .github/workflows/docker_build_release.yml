@@ -6,7 +6,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}  # e.g. ghcr.io/username/repo
+  #IMAGE_NAME: ${{ github.repository }}  # e.g. ghcr.io/username/repo
+  IMAGE_NAME: "ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest"
 
 jobs:
   build-and-push-image:
