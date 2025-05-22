@@ -94,10 +94,14 @@ jobs:
 
       - name: Save new digest for next run
         if: steps.compare.outputs.changed == 'true'
+        env:
+          PAT: ${{ secrets.GH_PAT }}
         run: |
           echo "${{ steps.check_digest.outputs.digest }}" > ${{ env.DIGEST_FILE }}
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
           git add ${{ env.DIGEST_FILE }}
-          git commit -m "Update base image digest"
-          git push
+          git commit -m "Update base image digest" || echo "No changes to commit"
+          git remote set-url origin https://x-access-token:${PAT}@github.com/${{ github.repository }}
+          git push origin HEAD
+
