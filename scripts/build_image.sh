@@ -86,3 +86,9 @@ build_image "${DOCKER_JAZZY_FILE}" "${IMAGE_NAME}" "${BASE_ARG}"
 # Confirm image was built
 echo "✅ Final image list:"
 $CONTAINER_COMMAND images | grep "$(echo "$IMAGE_NAME" | cut -d':' -f1)" || echo "❌ Image not found in local registry."
+
+
+if [ ! -z "$CI" ]; then
+  echo "🧼 Running inside CI, pushing image..."
+  $CONTAINER_COMMAND push "$IMAGE_NAME"
+fi
