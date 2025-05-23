@@ -1,7 +1,7 @@
 services:
 
   rosbridge-node:
-    image: ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest
+    image: ghcr.io/svenkae1234/docker_registry_test:latest
     container_name: rosbridge-node
     ports:
       - 9090:9090
