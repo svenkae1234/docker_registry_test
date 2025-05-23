@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}  # e.g. svenkae1234/docker_registry_test
+  IMAGE_NAME: duatic/dev-workspace/dynaarm-jazzy
 
 jobs:
   build-and-push-image:
