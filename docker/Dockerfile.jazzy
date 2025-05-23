@@ -94,4 +94,5 @@ RUN mkdir -p /root/.cache/history && \
     touch /root/.cache/history/history.log && \
     ln -sf /root/.cache/history/history.log /root/.bash_history
 
-CMD [ "/bin/bash" ]
+CMD [ "/bin/bash", "-c", "source /opt/ros/$ROS_DISTRO/setup.bash && source /ros2_ws/install/setup.bash" ]
+
