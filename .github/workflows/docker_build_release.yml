@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}  # e.g. svenkae1234/docker_registry_test
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push-image:
@@ -40,9 +40,19 @@ jobs:
       - name: Build Docker image using build_image.sh
         run: ./scripts/build_image.sh
 
-      - name: Retag built image for this repository
+      - name: Show local Docker images (debug)
+        run: docker images
+
+      - name: Find image ID and retag
+        id: tag_image
         run: |
-          docker tag ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          IMAGE_ID=$(docker images --format "{{.Repository}} {{.ID}}" | grep dynaarm-jazzy | awk '{print $2}')
+          if [ -z "$IMAGE_ID" ]; then
+            echo "❌ Could not find dynaarm-jazzy image"
+            exit 1
+          fi
+          echo "✅ Found image ID: $IMAGE_ID"
+          docker tag $IMAGE_ID ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Push Docker image to GHCR
         run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
