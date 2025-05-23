@@ -39,17 +39,12 @@ jobs:
 
       - name: Build Docker image using build_image.sh
         run: ./scripts/build_image.sh
+        env:
+          DOCKER_BUILDKIT: 0  # 🔧 disable BuildKit to make image visible to Docker CLI
 
       - name: Retag dynaarm-jazzy image for this repository
         run: |
-          echo "Searching for ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest..."
-          if ! docker image inspect ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest > /dev/null 2>&1; then
-            echo "❌ Image not found. Build may have failed or BuildKit is hiding it."
-            docker images
-            exit 1
-          fi
           docker tag ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          echo "✅ Retagged successfully."
 
       - name: Push Docker image to GHCR
         run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
