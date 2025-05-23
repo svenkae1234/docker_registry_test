@@ -16,6 +16,6 @@ services:
     volumes:
       - ../src:/ros2_ws/src            
       - /etc/security/limits.conf:/etc/security/limits.conf
-      - /tmp/.X11-unix:/tmp/.X11-unix      
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw    
       - duatic-root-cache:/root/.cache      
       
