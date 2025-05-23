@@ -40,9 +40,9 @@ jobs:
       - name: Build Docker image using build_image.sh
         run: ./scripts/build_image.sh
 
-      - name: Retag built image for this repository
-        run: |
-          docker tag ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      # - name: Retag built image for this repository
+      #   run: |
+      #     docker tag ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest
 
       - name: Push Docker image to GHCR
         run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
