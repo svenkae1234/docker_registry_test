@@ -84,8 +84,7 @@ RUN apt-get update && rosdep update
 RUN rosdep install -r --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
 
 # ✅ Build with colcon
-RUN colcon build 
-# --symlink-install --continue-on-error
+RUN . /opt/ros/$ROS_DISTRO/setup.sh && colcon build --symlink-install --continue-on-error
 
 # Clean up (optional)
 RUN mkdir -p /root/.cache/history && \
