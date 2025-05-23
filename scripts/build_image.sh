@@ -11,7 +11,8 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 CACHE_IMAGE_NAME="ghcr.io/duatic/dev-workspace/dynaarm-cache:latest"
 DOCKER_CACHE_FILE="${SCRIPT_DIR}/../docker/Dockerfile.cache"
 
-IMAGE_NAME="ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest"
+IMAGE_NAME="${IMAGE_NAME:-ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest}"
+
 DOCKER_JAZZY_FILE="${SCRIPT_DIR}/../docker/Dockerfile.jazzy"
 
 # Flags

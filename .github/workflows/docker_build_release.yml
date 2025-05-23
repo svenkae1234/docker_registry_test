@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository }}  # e.g. svenkae1234/docker_registry_test
 
 jobs:
   build-and-push-image:
@@ -27,7 +27,7 @@ jobs:
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -40,19 +40,8 @@ jobs:
       - name: Build Docker image using build_image.sh
         run: ./scripts/build_image.sh
         env:
-          DOCKER_BUILDKIT: 0  # Disable BuildKit for visibility
-
-      - name: Find built image by ID and retag for GHCR
-        run: |
-          echo "Searching for dynaarm-jazzy image by ID..."
-          IMAGE_ID=$(docker images --no-trunc --format "{{.Repository}} {{.ID}}" | grep dynaarm-jazzy | awk '{print $2}')
-          if [ -z "$IMAGE_ID" ]; then
-            echo "❌ Could not find dynaarm-jazzy image"
-            docker images
-            exit 1
-          fi
-          echo "✅ Found image ID: $IMAGE_ID"
-          docker tag $IMAGE_ID ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          IMAGE_NAME: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          DOCKER_BUILDKIT: 0  # Optional, disables isolation
 
       - name: Push Docker image to GHCR
         run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
