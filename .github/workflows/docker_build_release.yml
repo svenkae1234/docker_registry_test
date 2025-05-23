@@ -41,5 +41,5 @@ jobs:
       - name: Build Docker image using build_image.sh
         run: ./scripts/build_image.sh
         env:
-          IMAGE_NAME: ghcr.io/svenkae1234/docker_registry_test:latest
+          IMAGE_NAME: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           DOCKER_BUILDKIT: 0
