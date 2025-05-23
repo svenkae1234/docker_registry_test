@@ -2,10 +2,6 @@
 
 # ===== Global Variables =====
 
-# Allow overriding image name from environment
-IMAGE_NAME="${IMAGE_NAME:-ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest}"
-
-
 # Container runtime (Docker/Podman)
 CONTAINER_COMMAND=""
 
@@ -15,7 +11,7 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 CACHE_IMAGE_NAME="ghcr.io/duatic/dev-workspace/dynaarm-cache:latest"
 DOCKER_CACHE_FILE="${SCRIPT_DIR}/../docker/Dockerfile.cache"
 
-IMAGE_NAME="ghcr.io/duatic/dev-workspace/dynaarm-jazzy"
+IMAGE_NAME="ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest"
 DOCKER_JAZZY_FILE="${SCRIPT_DIR}/../docker/Dockerfile.jazzy"
 
 # Flags
