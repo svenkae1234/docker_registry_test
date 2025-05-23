@@ -12,6 +12,7 @@ ENV TZ="Europe/Berlin"
 ENV ROS_WS=/ros2_ws
 RUN mkdir -p ${ROS_WS}/src
 
+# Install dependencies
 RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get install -y \    
@@ -43,6 +44,7 @@ RUN apt-get update && \
     ros-$ROS_DISTRO-rosbridge-suite && \
     pip install pre-commit --break-system-packages
 
+# Setup bash-it (optional)
 RUN git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it && \
     bash ~/.bash_it/install.sh
 
@@ -64,17 +66,19 @@ RUN echo 'for repo_dir in /ros2_ws/src/*; do \
             done' >> /usr/local/bin/mark-safe-directories.sh && \
     chmod +x /usr/local/bin/mark-safe-directories.sh
 
-RUN --mount=type=bind,source=src,target=${ROS_WS}/src \
-    set -x && \
+# ✅ COPY the cloned repositories into the Docker image
+COPY src/ ${ROS_WS}/src/
+
+# ✅ Build the workspace during image build
+RUN set -x && \
     bash /usr/local/bin/mark-safe-directories.sh && \
-    apt-get update && \    
+    apt-get update && \
     bash /root/colcon_mixin.sh && \
     colcon mixin update default && \
     cd ${ROS_WS} && \
     rosdep update && \
     rosdep install -r --from-paths ./src --ignore-src --rosdistro $ROS_DISTRO -y && \
-    if [ -e ~/.config/ros.org/rqt_gui.ini ]; then rm -rf ~/.config/ros.org/rqt_gui.ini; fi && \
-    if [ -e ~/.config/ros.org/rqt_gui ]; then rm -rf ~/.config/ros.org/rqt_gui; fi && \
+    colcon build --symlink-install && \
     apt-get -y clean
 
 RUN mkdir -p /root/.cache/history && \
