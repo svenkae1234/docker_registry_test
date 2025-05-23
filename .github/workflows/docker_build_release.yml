@@ -40,11 +40,22 @@ jobs:
       - name: Build Docker image using build_image.sh
         run: ./scripts/build_image.sh
         env:
-          IMAGE_NAME: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          DOCKER_BUILDKIT: 0  # Optional, disables isolation
+          IMAGE_NAME: ghcr.io/svenkae1234/docker_registry_test:latest
+          DOCKER_BUILDKIT: 0
+
+      - name: Re-tag built image for safety before push
+        run: |
+          IMAGE_ID=$(docker images --no-trunc --format "{{.Repository}} {{.ID}}" | grep ghcr.io/svenkae1234/docker_registry_test | awk '{print $2}')
+          if [ -z "$IMAGE_ID" ]; then
+            echo "❌ Image ID not found!"
+            docker images
+            exit 1
+          fi
+          docker tag "$IMAGE_ID" ghcr.io/svenkae1234/docker_registry_test:latest
 
       - name: Push Docker image to GHCR
-        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        run: docker push ghcr.io/svenkae1234/docker_registry_test:latest
+
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
