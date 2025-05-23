@@ -40,19 +40,16 @@ jobs:
       - name: Build Docker image using build_image.sh
         run: ./scripts/build_image.sh
 
-      - name: Show local Docker images (debug)
-        run: docker images
-
-      - name: Find image ID and retag
-        id: tag_image
+      - name: Retag dynaarm-jazzy image for this repository
         run: |
-          IMAGE_ID=$(docker images --format "{{.Repository}} {{.ID}}" | grep dynaarm-jazzy | awk '{print $2}')
-          if [ -z "$IMAGE_ID" ]; then
-            echo "❌ Could not find dynaarm-jazzy image"
+          echo "Searching for ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest..."
+          if ! docker image inspect ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest > /dev/null 2>&1; then
+            echo "❌ Image not found. Build may have failed or BuildKit is hiding it."
+            docker images
             exit 1
           fi
-          echo "✅ Found image ID: $IMAGE_ID"
-          docker tag $IMAGE_ID ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker tag ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          echo "✅ Retagged successfully."
 
       - name: Push Docker image to GHCR
         run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
