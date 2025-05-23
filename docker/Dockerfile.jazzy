@@ -9,6 +9,9 @@ ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 ENV PIP_BREAK_SYSTEM_PACKAGES=1
 ENV TZ="Europe/Berlin"
 ENV ROS_WS=/ros2_ws
+ENV DISPLAY=:0
+ENV QT_X11_NO_MITSHM=1
+
 
 # Create workspace
 RUN mkdir -p ${ROS_WS}/src
