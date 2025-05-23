@@ -10,7 +10,7 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 ROOT_DIR="${SCRIPT_DIR}/.."
 
 # Allow overriding image name externally (e.g. in CI)
-IMAGE_NAME="ghcr.io/docker_registry_test/dev-workspace/dynaarm-jazzy:latest"
+IMAGE_NAME="${IMAGE_NAME:-ghcr.io/duatic/dev-workspace/dynaarm-jazzy:latest}"
 CACHE_IMAGE_NAME="ghcr.io/duatic/dev-workspace/dynaarm-cache:latest"
 
 DOCKER_CACHE_FILE="${ROOT_DIR}/docker/Dockerfile.cache"
